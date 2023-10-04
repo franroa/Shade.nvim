@@ -153,6 +153,7 @@ local function shade_window(winid)
   local overlay = state.active_overlays[winid]
   if overlay then
     if api.nvim_win_is_valid(overlay.winid) then
+      vim.notify("Test shhade")
       api.nvim_win_set_option(overlay.winid, "winblend", state.overlay_opacity)
       log("shade_window",
         ("[%d] : overlay %d ON (winblend: %d)"):format(winid, overlay.winid, state.overlay_opacity))
@@ -289,10 +290,10 @@ shade.on_win_enter = function(event, winid)
   end
 
   -- hide the overlay on entered window
-  -- unshade_window(winid)
+  unshade_window(winid)
 
   -- place overlays on all other windows
-  -- shade_tabpage(winid)
+  shade_tabpage(winid)
 end
 
 shade.event_listener = function(_, winid, _, _, _)
