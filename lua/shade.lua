@@ -104,7 +104,7 @@ local function filter_wininfo(wininfo)
     row       = wininfo.winrow - 1,
     col       = wininfo.wincol - 1,
     width     = wininfo.width,
-    height    = 10,
+    height    = wininfo.height,
   }
 end
 
@@ -153,7 +153,6 @@ local function shade_window(winid)
   local overlay = state.active_overlays[winid]
   if overlay then
     if api.nvim_win_is_valid(overlay.winid) then
-      vim.notify("Test aasfsdfshhade")
       api.nvim_win_set_option(overlay.winid, "winblend", state.overlay_opacity)
       log("shade_window",
         ("[%d] : overlay %d ON (winblend: %d)"):format(winid, overlay.winid, state.overlay_opacity))
