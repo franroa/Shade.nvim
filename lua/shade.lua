@@ -1,13 +1,13 @@
 -- TODO: remove all active_overlays on tab change
-local api = vim.api
+local api                 = vim.api
 
-local E = {}
+local E                   = {}
 E.DEFAULT_OVERLAY_OPACITY = 50
 E.DEFAULT_OPACITY_STEP    = 1
 E.DEBUG_OVERLAY_OPACITY   = 90
 E.NOTIFICATION_TIMEOUT    = 1000 -- ms
 
-local state = {}
+local state               = {}
 state.active              = false
 state.active_overlays     = {}
 state.shade_nsid          = nil
@@ -32,16 +32,16 @@ end
 --
 
 local font = {
-  0x7C, 0xC6, 0xCE, 0xDE, 0xF6, 0xE6, 0x7C, 0x00,   --  (0)
-  0x30, 0x70, 0x30, 0x30, 0x30, 0x30, 0xFC, 0x00,   --  (1)
-  0x78, 0xCC, 0x0C, 0x38, 0x60, 0xCC, 0xFC, 0x00,   --  (2)
-  0x78, 0xCC, 0x0C, 0x38, 0x0C, 0xCC, 0x70, 0x00,   --  (3)
-  0x1C, 0x3C, 0x6C, 0xCC, 0xFE, 0x0C, 0x1E, 0x00,   --  (4)
-  0xFC, 0xC0, 0xF8, 0x0C, 0x0C, 0xCC, 0x78, 0x00,   --  (5)
-  0x38, 0x60, 0xC0, 0xF8, 0xCC, 0xCC, 0x78, 0x00,   --  (6)
-  0xFC, 0xCC, 0x0C, 0x18, 0x30, 0x30, 0x30, 0x00,   --  (7)
-  0x78, 0xCC, 0xCC, 0x78, 0xCC, 0xCC, 0x78, 0x00,   --  (8)
-  0x78, 0xCC, 0xCC, 0x7C, 0x0C, 0x18, 0x70, 0x00,   --  (9)
+  0x7C, 0xC6, 0xCE, 0xDE, 0xF6, 0xE6, 0x7C, 0x00, --  (0)
+  0x30, 0x70, 0x30, 0x30, 0x30, 0x30, 0xFC, 0x00, --  (1)
+  0x78, 0xCC, 0x0C, 0x38, 0x60, 0xCC, 0xFC, 0x00, --  (2)
+  0x78, 0xCC, 0x0C, 0x38, 0x0C, 0xCC, 0x70, 0x00, --  (3)
+  0x1C, 0x3C, 0x6C, 0xCC, 0xFE, 0x0C, 0x1E, 0x00, --  (4)
+  0xFC, 0xC0, 0xF8, 0x0C, 0x0C, 0xCC, 0x78, 0x00, --  (5)
+  0x38, 0x60, 0xC0, 0xF8, 0xCC, 0xCC, 0x78, 0x00, --  (6)
+  0xFC, 0xCC, 0x0C, 0x18, 0x30, 0x30, 0x30, 0x00, --  (7)
+  0x78, 0xCC, 0xCC, 0x78, 0xCC, 0xCC, 0x78, 0x00, --  (8)
+  0x78, 0xCC, 0xCC, 0x7C, 0x0C, 0x18, 0x70, 0x00, --  (9)
 }
 
 
@@ -55,7 +55,7 @@ local function digitize(number)
   assert(type(number) == "number")
   local len = math.floor(math.log10(number) + 1)
 
-  local block_chars = {[0] = " ", [1] = "▀", [2] = "▄", [3] = "█"}
+  local block_chars = { [0] = " ", [1] = "▀", [2] = "▄", [3] = "█" }
 
   -- generate bit table
   local offset, char, row_bits, hex_val, b
@@ -101,10 +101,10 @@ local function filter_wininfo(wininfo)
     relative  = "editor",
     style     = "minimal",
     focusable = false,
-    row    = wininfo.winrow - 1,
-    col    = wininfo.wincol - 1,
-    width  = wininfo.width,
-    height = wininfo.height,
+    row       = wininfo.winrow - 1,
+    col       = wininfo.wincol - 1,
+    width     = wininfo.width,
+    height    = wininfo.height,
   }
 end
 
@@ -144,7 +144,7 @@ end
 
 local function map_key(mode, key, action)
   local req_module = ("<cmd>lua require'shade'.%s<CR>"):format(action)
-  vim.api.nvim_set_keymap(mode, key, req_module, {noremap = true, silent = true})
+  vim.api.nvim_set_keymap(mode, key, req_module, { noremap = true, silent = true })
 end
 
 
@@ -212,7 +212,7 @@ end
 local function create_tabpage_overlays(tabid)
   local wincfg
   for _, winid in pairs(api.nvim_tabpage_list_wins(tabid)) do
-    wincfg = api.nvim_call_function("getwininfo", {winid})[1]
+    wincfg = api.nvim_call_function("getwininfo", { winid })[1]
     create_overlay_window(winid, filter_wininfo(wincfg))
   end
   unshade_window(api.nvim_get_current_win())
@@ -228,8 +228,8 @@ shade.init = function(opts)
   state.debug = opts.debug or false
 
   state.overlay_opacity = opts.overlay_opacity or
-                            (state.debug == true and E.DEBUG_OVERLAY_OPACITY or
-                              E.DEFAULT_OVERLAY_OPACITY)
+      (state.debug == true and E.DEBUG_OVERLAY_OPACITY or
+        E.DEFAULT_OVERLAY_OPACITY)
   state.opacity_step = opts.opacity_step or E.DEFAULT_OPACITY_STEP
   state.shade_under_float = opts.shade_under_float or true
 
@@ -253,7 +253,7 @@ shade.init = function(opts)
 
   create_hl_groups()
 
-  api.nvim_set_decoration_provider(state.shade_nsid, {on_win = shade.event_listener})
+  api.nvim_set_decoration_provider(state.shade_nsid, { on_win = shade.event_listener })
 
   -- setup autocommands -- TODO: set a precalculated winid
   api.nvim_exec([[
@@ -273,27 +273,27 @@ end
 
 --
 
-shade.on_win_enter = function(event, winid)
-  log(event, winid)
-  if not state.active_overlays[winid] then
-    local float_cfg = api.nvim_win_get_config(winid)
-    if float_cfg["relative"] == "" then
-      local wincfg = api.nvim_call_function("getwininfo", {winid})[1]
-      create_overlay_window(winid, filter_wininfo(wincfg))
-    else
-      log(event, "floating window ignored: " .. winid)
-      if not state.shade_under_float then
-        return
-      end
-    end
-  end
-
-  -- hide the overlay on entered window
-  unshade_window(winid)
-
-  -- place overlays on all other windows
-  shade_tabpage(winid)
-end
+-- shade.on_win_enter = function(event, winid)
+--   log(event, winid)
+--   if not state.active_overlays[winid] then
+--     local float_cfg = api.nvim_win_get_config(winid)
+--     if float_cfg["relative"] == "" then
+--       local wincfg = api.nvim_call_function("getwininfo", {winid})[1]
+--       create_overlay_window(winid, filter_wininfo(wincfg))
+--     else
+--       log(event, "floating window ignored: " .. winid)
+--       if not state.shade_under_float then
+--         return
+--       end
+--     end
+--   end
+--
+--   -- hide the overlay on entered window
+--   unshade_window(winid)
+--
+--   -- place overlays on all other windows
+--   shade_tabpage(winid)
+-- end
 
 shade.event_listener = function(_, winid, _, _, _)
   local cached = state.active_overlays[winid]
@@ -302,8 +302,8 @@ shade.event_listener = function(_, winid, _, _, _)
   end
 
   -- check if window dims match cache
-  local current_wincfg = vim.api.nvim_call_function("getwininfo", {winid})[1]
-  local resize_metrics = {"width", "height", "wincol", "winrow"}
+  local current_wincfg = vim.api.nvim_call_function("getwininfo", { winid })[1]
+  local resize_metrics = { "width", "height", "wincol", "winrow" }
   for _, m in pairs(resize_metrics) do
     if current_wincfg[m] ~= cached.wincfg[m] then
       log("event_listener: resized", winid)
@@ -340,8 +340,8 @@ shade.change_brightness = function(level)
   end
 
   local status_opts = {
-    relative = "editor",
-    style = "minimal",
+    relative  = "editor",
+    style     = "minimal",
     focusable = false,
     row       = 1,
     col       = vim.o.columns - 18,
@@ -375,7 +375,6 @@ shade.change_brightness = function(level)
         log("notification", "popup closed")
       end
     end))
-
 end
 
 -- Main
@@ -443,11 +442,11 @@ M.autocmd = function(event, winid)
       create_tabpage_overlays(0)
     end,
     ["OptionSet"] = function()
-     local diff_enabled = api.nvim_get_vvar('option_new')
-     if diff_enabled then
-       unshade_window(winid)
-       shade_tabpage(winid)
-     end
+      local diff_enabled = api.nvim_get_vvar('option_new')
+      if diff_enabled then
+        unshade_window(winid)
+        shade_tabpage(winid)
+      end
     end
   }
 
