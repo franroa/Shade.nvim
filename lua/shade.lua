@@ -431,7 +431,7 @@ M.autocmd = function(event, winid)
   log("AutoCmd: " .. event .. " : " .. winid)
 
   local event_fn = {
-    ["WinEnter"] = function()
+    ["WinResized"] = function()
       shade.on_win_enter(event, winid)
     end,
     ["WinClosed"] = function()
