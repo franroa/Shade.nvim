@@ -273,27 +273,27 @@ end
 
 --
 
--- shade.on_win_enter = function(event, winid)
---   log(event, winid)
---   if not state.active_overlays[winid] then
---     local float_cfg = api.nvim_win_get_config(winid)
---     if float_cfg["relative"] == "" then
---       local wincfg = api.nvim_call_function("getwininfo", {winid})[1]
---       create_overlay_window(winid, filter_wininfo(wincfg))
---     else
---       log(event, "floating window ignored: " .. winid)
---       if not state.shade_under_float then
---         return
---       end
---     end
---   end
---
---   -- hide the overlay on entered window
---   unshade_window(winid)
---
---   -- place overlays on all other windows
---   shade_tabpage(winid)
--- end
+shade.on_win_enter = function(event, winid)
+  log(event, winid)
+  if not state.active_overlays[winid] then
+    local float_cfg = api.nvim_win_get_config(winid)
+    if float_cfg["relative"] == "" then
+      local wincfg = api.nvim_call_function("getwininfo", { winid })[1]
+      create_overlay_window(winid, filter_wininfo(wincfg))
+    else
+      log(event, "floating window ignored: " .. winid)
+      if not state.shade_under_float then
+        return
+      end
+    end
+  end
+
+  -- hide the overlay on entered window
+  -- unshade_window(winid)
+
+  -- place overlays on all other windows
+  -- shade_tabpage(winid)
+end
 
 shade.event_listener = function(_, winid, _, _, _)
   local cached = state.active_overlays[winid]
@@ -431,9 +431,9 @@ M.autocmd = function(event, winid)
   log("AutoCmd: " .. event .. " : " .. winid)
 
   local event_fn = {
-    -- ["WinEnter"] = function()
-    --   shade.on_win_enter(event, winid)
-    -- end,
+    ["WinEnter"] = function()
+      shade.on_win_enter(event, winid)
+    end,
     ["WinClosed"] = function()
       shade.on_win_closed(event, winid)
     end,
